@@ -4,7 +4,7 @@ class NetworkTokenizationCreditCardTest < Test::Unit::TestCase
 
   def setup
     @tokenized_card = ActiveMerchant::Billing::NetworkTokenizationCreditCard.new({
-      number: "4242424242424242", :brand => "visa",
+      number: "4242424242424242", brand: "visa",
       month: default_expiration_date.month, year: default_expiration_date.year,
       payment_cryptogram: "EHuWW9PiBkWvqE5juRwDzAUFBAk=", eci: "05"
     })
@@ -32,6 +32,20 @@ class NetworkTokenizationCreditCardTest < Test::Unit::TestCase
 
   def test_optional_validations
     assert_valid @tokenized_card, "Network tokenization card should not require name or verification value"
+  end
+
+  def test_eci=
+    @tokenized_card.eci = 7
+    assert_equal "07", @tokenized_card.eci
+
+    @tokenized_card.eci = "7"
+    assert_equal "07", @tokenized_card.eci
+
+    @tokenized_card.eci = "05"
+    assert_equal "05", @tokenized_card.eci
+
+    @tokenized_card.eci = "recurring"
+    assert_equal "recurring", @tokenized_card.eci
   end
 
   def test_source

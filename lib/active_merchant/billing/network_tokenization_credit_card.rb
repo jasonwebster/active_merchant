@@ -14,10 +14,16 @@ module ActiveMerchant #:nodoc:
       self.require_verification_value = false
       self.require_name = false
 
-      attr_accessor :payment_cryptogram, :eci, :transaction_id
+      attr_accessor :payment_cryptogram, :transaction_id
+      attr_reader :eci
       attr_writer :source
 
       SOURCES = [:apple_pay, :android_pay]
+
+      def eci=(value)
+        value = value.to_s
+        @eci = value =~ (/\A[0-9]+\z/) ? value.rjust(2, "0") : value
+      end
 
       def source
         if defined?(@source) && SOURCES.include?(@source)
