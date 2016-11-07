@@ -448,21 +448,7 @@ module ActiveMerchant #:nodoc:
 
       def post_data(params)
         return nil unless params
-
-        params.map do |key, value|
-          next if value != false && value.blank?
-          if value.is_a?(Hash)
-            h = {}
-            value.each do |k, v|
-              h["#{key}[#{k}]"] = v unless v.blank?
-            end
-            post_data(h)
-          elsif value.is_a?(Array)
-            value.map { |v| "#{key}[]=#{CGI.escape(v.to_s)}" }.join("&")
-          else
-            "#{key}=#{CGI.escape(value.to_s)}"
-          end
-        end.compact.join("&")
+        Rack::Utils.build_nested_query(params)
       end
 
       def headers(options = {})
